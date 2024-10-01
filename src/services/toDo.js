@@ -14,7 +14,7 @@ export const toDoApi = createApi({
     getToDos: builder.query({
       query: () => {
         return {
-          url: `todos?isCompleted=false`,
+          url: `/todos`,
           method: 'GET',
           headers
         }
@@ -43,6 +43,30 @@ export const toDoApi = createApi({
       invalidatesTags: ['Todos'],
       transformResponse: (response, meta, arg) => response.data,
       transformErrorResponse: (response, meta, arg) => response.status
+    }),
+    editTodo: builder.mutation({
+      query: ({id, updatedTask}) => {
+        return {
+          url: `/todos/${id}`,
+          method: 'PATCH',
+          headers,
+          body: updatedTask,
+        }
+      },
+      onSuccess: (data) => console.log('Запрос успешен!', data), // Обработка успешного ответа
+      onError: (error) => console.error('Произошла ошибка:', error), 
+    }),
+    isComplTodo: builder.mutation({
+      query: ({id, boolean}) =>{
+        console.log(id, boolean);
+        
+        return {
+          url: `/todos/${id}/isCompleted`,
+          method: 'PATCH',
+          headers,
+          body: boolean,
+        }
+      }
     })
   })
 })
@@ -50,5 +74,7 @@ export const toDoApi = createApi({
 export const {
   useGetToDosQuery,
   useCreateToDoMutation,
-  useDeleteToDoMutation
+  useDeleteToDoMutation,
+  useEditTodoMutation,
+  useIsComplTodoMutation,
 } = toDoApi
